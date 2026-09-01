@@ -1,6 +1,8 @@
 // Ira AI Chat Application with Firebase Authentication
 
 // Firebase Configuration
+// ⚠️ IMPORTANT: Replace these with your actual Firebase project credentials
+// Get these from your Firebase Console: https://console.firebase.google.com
 const firebaseConfig = {
     apiKey: "AIzaSyDaP-8N-5VqK-0RCZhNmVQJvKZ0N_8MkIQ",
     authDomain: "ira-ai-chat-app.firebaseapp.com",
@@ -11,9 +13,15 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+try {
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    console.log('✅ Firebase initialized successfully');
+} catch (error) {
+    console.error('❌ Firebase initialization error:', error);
+    alert('Firebase setup incomplete. Please update your credentials in src/chat.js');
+}
 
 class IraChat {
     constructor() {
@@ -84,6 +92,13 @@ class IraChat {
     }
 
     setupAuthListener() {
+        if (typeof firebase === 'undefined' || !firebase.auth) {
+            console.error('❌ Firebase not loaded');
+            this.authModal.classList.add('active');
+            this.chatContainer.style.display = 'none';
+            return;
+        }
+
         auth.onAuthStateChanged((user) => {
             if (user) {
                 this.currentUser = user;
@@ -92,10 +107,12 @@ class IraChat {
                 this.setupChatListeners();
                 this.loadSettings();
                 this.showNewChatWelcome();
+                console.log('✅ User logged in:', user.email);
             } else {
                 this.currentUser = null;
                 this.authModal.classList.add('active');
                 this.chatContainer.style.display = 'none';
+                console.log('❌ User logged out or not authenticated');
             }
         });
     }
@@ -124,15 +141,21 @@ class IraChat {
         });
 
         // Modal closing
-        this.settingsModal.addEventListener('click', (e) => {
-            if (e.target === this.settingsModal) this.closeSettings();
-        });
-        this.historyModal.addEventListener('click', (e) => {
-            if (e.target === this.historyModal) this.closeHistory();
-        });
-        this.profileModal.addEventListener('click', (e) => {
-            if (e.target === this.profileModal) this.closeProfile();
-        });
+        if (this.settingsModal) {
+            this.settingsModal.addEventListener('click', (e) => {
+                if (e.target === this.settingsModal) this.closeSettings();
+            });
+        }
+        if (this.historyModal) {
+            this.historyModal.addEventListener('click', (e) => {
+                if (e.target === this.historyModal) this.closeHistory();
+            });
+        }
+        if (this.profileModal) {
+            this.profileModal.addEventListener('click', (e) => {
+                if (e.target === this.profileModal) this.closeProfile();
+            });
+        }
     }
 
     switchAuthTab(tab) {
@@ -191,29 +214,41 @@ class IraChat {
     }
 
     openSettings() {
-        this.settingsModal.classList.add('active');
+        if (this.settingsModal) {
+            this.settingsModal.classList.add('active');
+        }
     }
 
     closeSettings() {
-        this.settingsModal.classList.remove('active');
+        if (this.settingsModal) {
+            this.settingsModal.classList.remove('active');
+        }
     }
 
     openHistory() {
-        this.historyModal.classList.add('active');
-        this.loadChatHistory();
+        if (this.historyModal) {
+            this.historyModal.classList.add('active');
+            this.loadChatHistory();
+        }
     }
 
     closeHistory() {
-        this.historyModal.classList.remove('active');
+        if (this.historyModal) {
+            this.historyModal.classList.remove('active');
+        }
     }
 
     openProfile() {
-        this.profileModal.classList.add('active');
-        this.displayProfile();
+        if (this.profileModal) {
+            this.profileModal.classList.add('active');
+            this.displayProfile();
+        }
     }
 
     closeProfile() {
-        this.profileModal.classList.remove('active');
+        if (this.profileModal) {
+            this.profileModal.classList.remove('active');
+        }
     }
 
     displayProfile() {
@@ -521,4 +556,3 @@ window.addEventListener('beforeunload', (e) => {
         e.returnValue = '';
     }
 });
-
