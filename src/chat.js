@@ -60,6 +60,7 @@ class IraChat {
 
         this.initializeElements();
         this.setupAuthListener();
+        this.setupAuthTabListeners();
         
         console.log('✅ IraChat initialized');
     }
@@ -134,6 +135,35 @@ class IraChat {
         console.log('✅ All DOM elements initialized');
     }
 
+    setupAuthTabListeners() {
+        console.log('🔄 Setting up auth tab listeners...');
+        
+        this.tabBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Tab clicked:', e.target.dataset.tab);
+                
+                const tab = e.target.dataset.tab;
+                
+                // Remove active class from all buttons and tabs
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked button
+                e.target.classList.add('active');
+                
+                // Add active class to corresponding tab
+                const tabContent = document.getElementById(tab + 'Tab');
+                if (tabContent) {
+                    tabContent.classList.add('active');
+                    console.log('✅ Switched to', tab, 'tab');
+                } else {
+                    console.error('❌ Tab content not found:', tab + 'Tab');
+                }
+            });
+        });
+    }
+
     setupAuthListener() {
         console.log('🔐 Setting up auth listener...');
         
@@ -193,9 +223,6 @@ class IraChat {
         // Auth modal listeners
         this.loginBtn.addEventListener('click', () => this.handleLogin());
         this.signupBtn.addEventListener('click', () => this.handleSignup());
-        this.tabBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => this.switchAuthTab(e.target.dataset.tab));
-        });
 
         // Modal closing
         if (this.settingsModal) {
@@ -215,15 +242,8 @@ class IraChat {
         }
     }
 
-    switchAuthTab(tab) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        
-        event.target.classList.add('active');
-        document.getElementById(tab + 'Tab').classList.add('active');
-    }
-
     async handleLogin() {
+        console.log('🔐 Login attempt...');
         const email = this.loginEmailInput.value.trim();
         const password = this.loginPasswordInput.value.trim();
 
@@ -237,12 +257,15 @@ class IraChat {
             this.loginEmailInput.value = '';
             this.loginPasswordInput.value = '';
             this.loginError.textContent = '';
+            console.log('✅ Login successful');
         } catch (error) {
+            console.error('❌ Login error:', error.message);
             this.loginError.textContent = error.message;
         }
     }
 
     async handleSignup() {
+        console.log('📝 Signup attempt...');
         const email = this.signupEmailInput.value.trim();
         const password = this.signupPasswordInput.value.trim();
         const name = this.signupNameInput.value.trim();
@@ -265,7 +288,9 @@ class IraChat {
             this.signupPasswordInput.value = '';
             this.signupNameInput.value = '';
             this.signupError.textContent = '';
+            console.log('✅ Signup successful');
         } catch (error) {
+            console.error('❌ Signup error:', error.message);
             this.signupError.textContent = error.message;
         }
     }
