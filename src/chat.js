@@ -1,15 +1,14 @@
 // Ira AI Chat Application with Firebase Authentication
 
 // Firebase Configuration
-// ⚠️ IMPORTANT: Replace these with your actual Firebase project credentials
-// Get these from your Firebase Console: https://console.firebase.google.com
 const firebaseConfig = {
-    apiKey: "AIzaSyDaP-8N-5VqK-0RCZhNmVQJvKZ0N_8MkIQ",
-    authDomain: "ira-ai-chat-app.firebaseapp.com",
-    projectId: "ira-ai-chat-app",
-    storageBucket: "ira-ai-chat-app.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef123456"
+    apiKey: "AIzaSyAkO3R5evKFfV3kRhB_bvXkhwR89r1PIZg",
+    authDomain: "ira-chat-ai.firebaseapp.com",
+    projectId: "ira-chat-ai",
+    storageBucket: "ira-chat-ai.firebasestorage.app",
+    messagingSenderId: "330951731036",
+    appId: "1:330951731036:web:f4d225ebba75b519e80399",
+    measurementId: "G-0GYFHT1449"
 };
 
 // Initialize Firebase
@@ -20,7 +19,7 @@ try {
     console.log('✅ Firebase initialized successfully');
 } catch (error) {
     console.error('❌ Firebase initialization error:', error);
-    alert('Firebase setup incomplete. Please update your credentials in src/chat.js');
+    alert('Firebase setup error. Check console for details.');
 }
 
 class IraChat {
@@ -112,7 +111,7 @@ class IraChat {
                 this.currentUser = null;
                 this.authModal.classList.add('active');
                 this.chatContainer.style.display = 'none';
-                console.log('❌ User logged out or not authenticated');
+                console.log('ℹ️ User not authenticated');
             }
         });
     }
