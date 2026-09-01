@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ira AI - Chat Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Auth Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome to Ira</h2>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs">
+                    <button class="tab-btn active" data-tab="login">Login</button>
+                    <button class="tab-btn" data-tab="signup">Sign Up</button>
+                </div>
+
+                <!-- Login Tab -->
+                <div class="tab-content active" id="loginTab">
+                    <div class="settings-group">
+                        <label for="loginEmail">Email:</label>
+                        <input type="email" id="loginEmail" class="settings-input" placeholder="you@example.com">
+                    </div>
+                    <div class="settings-group">
+                        <label for="loginPassword">Password:</label>
+                        <input type="password" id="loginPassword" class="settings-input" placeholder="••••••••">
+                    </div>
+                    <button class="btn-primary" id="loginBtn">Login</button>
+                    <p class="auth-error" id="loginError"></p>
+                </div>
+
+                <!-- Signup Tab -->
+                <div class="tab-content" id="signupTab">
+                    <div class="settings-group">
+                        <label for="signupEmail">Email:</label>
+                        <input type="email" id="signupEmail" class="settings-input" placeholder="you@example.com">
+                    </div>
+                    <div class="settings-group">
+                        <label for="signupPassword">Password:</label>
+                        <input type="password" id="signupPassword" class="settings-input" placeholder="At least 6 characters">
+                    </div>
+                    <div class="settings-group">
+                        <label for="signupName">Name:</label>
+                        <input type="text" id="signupName" class="settings-input" placeholder="Your name">
+                    </div>
+                    <button class="btn-primary" id="signupBtn">Create Account</button>
+                    <p class="auth-error" id="signupError"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="chatContainer" style="display: none;">
+        <div class="chat-wrapper">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-content">
+                    <h1>Ira</h1>
+                    <p class="subtitle">AI Chat Assistant</p>
+                </div>
+                <div class="header-buttons">
+                    <button class="settings-btn" id="historyBtn" title="Chat History">📋</button>
+                    <button class="settings-btn" id="settingsBtn" title="Settings">⚙️</button>
+                    <button class="settings-btn" id="profileBtn" title="Profile">👤</button>
+                </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div class="messages-container" id="messagesContainer">
+                <div class="welcome-message">
+                    <div class="welcome-icon">💬</div>
+                    <h2>Welcome to Ira</h2>
+                    <p>Start a conversation with your AI assistant. I'm here to help with questions, brainstorming, coding, and much more!</p>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <form id="chatForm" class="chat-form">
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="Type your message here..."
+                        autocomplete="off"
+                    >
+                    <button type="submit" class="send-btn" id="sendBtn">
+                        <span>Send</span>
+                        <span class="arrow">→</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Chat History Modal -->
+        <div class="modal" id="historyModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Chat History</h2>
+                    <button class="close-btn" id="closeHistoryBtn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="chatHistoryList" class="chat-history-list">
+                        <p class="text-light">Loading conversations...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Modal -->
+        <div class="modal" id="profileModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Profile</h2>
+                    <button class="close-btn" id="closeProfileBtn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-group">
+                        <label>Email:</label>
+                        <p id="userEmail" class="text-display"></p>
+                    </div>
+                    <div class="settings-group">
+                        <label>Name:</label>
+                        <p id="userName" class="text-display"></p>
+                    </div>
+                    <div class="settings-group">
+                        <label>Member Since:</label>
+                        <p id="userSince" class="text-display"></p>
+                    </div>
+                    <button class="btn-primary btn-danger" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Settings</h2>
+                    <button class="close-btn" id="closeSettingsBtn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-group">
+                        <label for="apiKeyInput">API Key:</label>
+                        <input 
+                            type="password" 
+                            id="apiKeyInput" 
+                            class="settings-input"
+                            placeholder="Enter your OpenAI API key"
+                        >
+                        <small>Your API key is stored locally in your browser.</small>
+                    </div>
+                    <div class="settings-group">
+                        <label for="modelSelect">Model:</label>
+                        <select id="modelSelect" class="settings-input">
+                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                            <option value="gpt-4">GPT-4</option>
+                            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                        </select>
+                    </div>
+                    <div class="settings-group">
+                        <label for="temperatureInput">Temperature (0-2):</label>
+                        <input 
+                            type="number" 
+                            id="temperatureInput" 
+                            class="settings-input"
+                            min="0"
+                            max="2"
+                            step="0.1"
+                            value="0.7"
+                        >
+                        <small>Lower values = more focused, higher values = more creative</small>
+                    </div>
+                    <div class="settings-group">
+                        <label for="saveChatName">Save Current Chat:</label>
+                        <div class="save-chat-group">
+                            <input 
+                                type="text" 
+                                id="saveChatName" 
+                                class="settings-input"
+                                placeholder="e.g., Coding Help"
+                            >
+                            <button class="btn-secondary" id="saveChatBtn">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+
+    <script src="../src/chat.js"></script>
+</body>
+</html>

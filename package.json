@@ -1,0 +1,21 @@
+{
+  "name": "ira-ai",
+  "version": "1.0.0",
+  "description": "A modern web chat application with AI assistant Ira",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "chat",
+    "ai",
+    "openai",
+    "chatbot",
+    "ira"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
