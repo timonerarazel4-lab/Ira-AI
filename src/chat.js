@@ -35,15 +35,21 @@ function initializeFirebase() {
         console.log('✅ Firebase initialized successfully');
         
         // Start the chat app after Firebase is ready
-        startChatApp();
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startChatApp);
+        } else {
+            startChatApp();
+        }
     } catch (error) {
         console.error('❌ Firebase initialization error:', error);
-        alert('Firebase setup error: ' + error.message);
+        console.error('Error details:', error.message);
     }
 }
 
 class IraChat {
     constructor() {
+        console.log('📱 Initializing IraChat class...');
+        
         this.apiKey = localStorage.getItem('ira_api_key') || '';
         this.model = localStorage.getItem('ira_model') || 'gpt-3.5-turbo';
         this.temperature = parseFloat(localStorage.getItem('ira_temperature') || '0.7');
@@ -54,12 +60,28 @@ class IraChat {
 
         this.initializeElements();
         this.setupAuthListener();
+        
+        console.log('✅ IraChat initialized');
     }
 
     initializeElements() {
+        console.log('🔍 Initializing DOM elements...');
+        
         // Auth elements
         this.authModal = document.getElementById('authModal');
         this.chatContainer = document.getElementById('chatContainer');
+        
+        if (!this.authModal) {
+            console.error('❌ authModal not found!');
+        } else {
+            console.log('✅ authModal found');
+        }
+        
+        if (!this.chatContainer) {
+            console.error('❌ chatContainer not found!');
+        } else {
+            console.log('✅ chatContainer found');
+        }
         
         // Login elements
         this.loginEmailInput = document.getElementById('loginEmail');
@@ -108,30 +130,46 @@ class IraChat {
 
         // Tab elements
         this.tabBtns = document.querySelectorAll('.tab-btn');
+        
+        console.log('✅ All DOM elements initialized');
     }
 
     setupAuthListener() {
+        console.log('🔐 Setting up auth listener...');
+        
         if (!firebaseReady) {
             console.error('❌ Firebase not ready');
-            this.authModal.classList.add('active');
-            this.chatContainer.style.display = 'none';
+            if (this.authModal) {
+                this.authModal.classList.add('active');
+            }
+            if (this.chatContainer) {
+                this.chatContainer.style.display = 'none';
+            }
             return;
         }
 
         auth.onAuthStateChanged((user) => {
             if (user) {
+                console.log('✅ User logged in:', user.email);
                 this.currentUser = user;
-                this.authModal.classList.remove('active');
-                this.chatContainer.style.display = 'flex';
+                if (this.authModal) {
+                    this.authModal.classList.remove('active');
+                }
+                if (this.chatContainer) {
+                    this.chatContainer.style.display = 'flex';
+                }
                 this.setupChatListeners();
                 this.loadSettings();
                 this.showNewChatWelcome();
-                console.log('✅ User logged in:', user.email);
             } else {
-                this.currentUser = null;
-                this.authModal.classList.add('active');
-                this.chatContainer.style.display = 'none';
                 console.log('ℹ️ User not authenticated');
+                this.currentUser = null;
+                if (this.authModal) {
+                    this.authModal.classList.add('active');
+                }
+                if (this.chatContainer) {
+                    this.chatContainer.style.display = 'none';
+                }
             }
         });
     }
@@ -565,21 +603,9 @@ class IraChat {
 
 // Function to start the chat app
 function startChatApp() {
-    document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Starting chat app...');
+    if (!window.ira) {
         window.ira = new IraChat();
-    });
-    
-    // In case DOM is already loaded
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!window.ira) {
-                window.ira = new IraChat();
-            }
-        });
-    } else {
-        if (!window.ira) {
-            window.ira = new IraChat();
-        }
     }
 }
 
@@ -592,4 +618,5 @@ window.addEventListener('beforeunload', (e) => {
 });
 
 // Initialize Firebase when this script loads
+console.log('📄 chat.js loaded, initializing Firebase...');
 initializeFirebase();
